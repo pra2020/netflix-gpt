@@ -5,6 +5,14 @@
 - Header
 - Login Form
 - Sign up form
+- Form Validation
+- useRef Hook
+- Firebase Setup
+- Deploying App to Firebase
+- Create SignUp User Account
+- Implement Sign In user Api
+- Created Redux Store with userSlice
+- Implemented Signout feature
 
 # Features
 - Login/SignUp Page
@@ -20,3 +28,12 @@
 - NetflixGPT
   - Search Bar
   - Movie Suggestions
+
+
+
+  ------
+
+  npm install -g firebase-tools
+  firebase login
+  firebase init
+  firebase deloy

@@ -1,14 +1,24 @@
 import { useRef, useState } from "react";
 import Header from "./Header";
 import { checkValidData } from "../utils/Validate";
+import { auth } from "../utils/firebase"; 
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/userSlice";
+
 
 const Login = () => {
   const [isSignInForm, setSignInForm] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
 
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   // useRef is used when we have to provide the reference eg: input
   const email = useRef(null);
   const password = useRef(null);
+  const name = useRef(null);
 
   const toggleSignInForm = () => {
     setSignInForm(!isSignInForm);
@@ -19,7 +29,64 @@ const Login = () => {
     const message = checkValidData(email.current.value,password.current.value);
     setErrorMessage(message);
 
-    // Sign In/Up
+    if(message) return;
+
+    // Sign In/Up Logic
+    if(!isSignInForm){
+      // logic for sign-up 
+      createUserWithEmailAndPassword(auth,email.current.value,password.current.value)
+      .then((userCredential) => {
+        // Signed up 
+        const user = userCredential.user;
+
+        updateProfile(user, {
+          displayName: name.current.value, photoURL: "https://example.com/jane-q-user/profile.jpg"
+        }).then(() => {
+          // Profile updated!
+          const {uid, email, displayName, photoURL} = auth.currentUser;
+        dispatch(addUser({
+          uid: uid,
+          email: email,
+          displayName: displayName,
+          photoURL: photoURL
+        }));
+          navigate("./browse");
+          // ...
+        }).catch((error) => {
+          // An error occurred
+          // ...
+          setErrorMessage(error.message)
+        });
+
+        console.log(user);
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // ..
+        setErrorMessage(errorCode + "-" + errorMessage)
+      });
+      
+    }else{
+      // logic for sign-in
+      
+      signInWithEmailAndPassword(auth,email.current.value,password.current.value)
+      .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        console.log(user);
+        navigate("./browse");
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setErrorMessage(errorCode + "-" + errorMessage)
+  });
+    }
+
+
   };
 
   return (
@@ -41,6 +108,7 @@ const Login = () => {
         </h1>
         {!isSignInForm && (
           <input
+            ref={name}
             type="text"
             placeholder="Full Name"
             className="p-2 my-4 w-full bg-gray-700"
