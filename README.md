@@ -27,6 +27,10 @@
 - fetch data for trailer video
 - embedded the youtube video
 - autoplay and mute
+- TMDB Image cdn
+- Build Movie List
+- Build Movie Card
+
 
 # Features
 - Login/SignUp Page
