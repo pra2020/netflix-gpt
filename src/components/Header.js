@@ -5,15 +5,17 @@ import {signOut, onAuthStateChanged, getAuth} from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser, removeUser } from "../utils/userSlice"; 
 import { useEffect } from "react"; 
-import data from "../utils/constants"; 
-const PROFILE = "https://wallpapers.com/images/hd/netflix-profile-pictures-5yup5hd2i60x7ew3.jpg";
-const LOGO = "https://cdn.cookielaw.org/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png";
-
+import { toggleGptSearchView } from '../utils/gptSlice';
+import { SUPPORTED_LANGUAGES } from "../utils/constants";
+import { LOGO, PROFILE } from "../utils/constants";
+import lang from "../utils/languageConstants";
+import { changeLanguage } from "../utils/configSlice";
 
 const Header = () => {
 
   const navigate = useNavigate();
   const user = useSelector(store => store.user);
+  const showGptSearch = useSelector((store) => store.gpt.showGptSearch)
   const dispatch = useDispatch();
 
   const handleSignOut = () => {
@@ -50,7 +52,16 @@ const Header = () => {
 
     // unsubscribe when the component unmounts
     return () => unsubscribe();
-  },[]) 
+  },[]);
+  
+  const handleButtonSearch = () => {
+    // toggle gpt search
+    dispatch(toggleGptSearchView())
+  } 
+
+  const handleLangChange = (e) => {
+    dispatch(changeLanguage(e.target.value))
+  }
 
   return (
     <div className="flex justify-between absolute z-10 px-8 py-2 bg-gradient-to-b  from-black w-screen">
@@ -60,6 +71,11 @@ const Header = () => {
         src={LOGO}
       />
       <div className="flex p-2 ">
+        {showGptSearch && (<select className="p-2 bg-gray-900 text-white m-2" onChange={handleLangChange}>
+          {SUPPORTED_LANGUAGES.map(lang => <option key={lang.identifier} value={lang.identifier}>{lang.name}</option>
+)}
+        </select>)}
+        <button className="py-2 px-4 m-2 bg-purple-600 text-white rounded-lg mx-4 mb-4" onClick={handleButtonSearch}>{showGptSearch ? "Home Page" : "GPT Search"}</button>
         <img alt="usericon"className="w-12 h-12" src={PROFILE}/>
       <button onClick={handleSignOut} className="font-bold text-white">
         Sign Out

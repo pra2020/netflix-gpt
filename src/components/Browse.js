@@ -3,18 +3,26 @@ import Header from './Header'
 import useNowPlayingMovies from '../customHooks/useNowlayingMovies'
 import MainContainer from './MainContainer';
 import SecondaryContainer from './SecondaryContainer';
+import GptSearch from './GptSearch';
+import { useSelector } from 'react-redux';
 
 const Browse = () => {
+
+  const showGptSearch = useSelector(store => store.gpt.showGptSearch);
 
   // used the custom hook to call get the movies through api
   useNowPlayingMovies();
 
   return (
     <div>
-      <Header/>
+      <Header /> 
+      {showGptSearch ? (<GptSearch />) : (
+      <>
+        <MainContainer />
+        <SecondaryContainer />
+      </>
+      )}
 
-    <MainContainer/>
-    <SecondaryContainer/>
 
       {/*
    MainContainer

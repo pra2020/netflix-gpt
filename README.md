@@ -30,6 +30,9 @@
 - TMDB Image cdn
 - Build Movie List
 - Build Movie Card
+- GPT Search Feature
+- GPT Search Bar
+- Multi-lang Feature in our App
 
 
 # Features
